@@ -32,7 +32,12 @@ app.set('view engine', 'html');
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/static', express.static(path.join(__dirname, '../public')));
+
+// Serve static files from the 'public' directory
+// We serve it both on /static and / for maximum compatibility
+const publicPath = path.join(process.cwd(), 'public');
+app.use('/static', express.static(publicPath));
+app.use(express.static(publicPath));
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
