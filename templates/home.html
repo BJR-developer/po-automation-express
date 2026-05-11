@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shopify PO Automation</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <section class="hero">
+    <div class="container">
+      <div class="badge">Production Ready System</div>
+      <h1>Shopify PO Automation</h1>
+      <p class="subtitle">Seamlessly bridge your Shopify store with your n8n workflows. Professional, secure, and built for scale.</p>
+
+      <!-- Token box — only shown if localStorage has a valid token -->
+      <div id="tokenSection" class="token-container">
+        <div class="token-header">
+          <span class="token-label">Access Token · Visible for 1 hour</span>
+          <button class="copy-btn" id="copyBtnHome" onclick="copyHomeToken()">📋 Copy</button>
+        </div>
+        <div id="tokenValue" class="token-value"></div>
+        <div id="tokenMeta" class="token-meta"></div>
+      </div>
+
+      <!-- Status -->
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        <span class="status-text">App is connected to n8n</span>
+      </div>
+
+      <br />
+      <a href="/install" class="btn btn-primary">Connect &amp; Authenticate Store</a>
+    </div>
+  </section>
+
+  <script src="/static/home.js"></script>
+</body>
+</html>
