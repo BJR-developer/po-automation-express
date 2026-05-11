@@ -3,37 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shopify PO Automation</title>
+  <title>Shopify PO Automation | Pro</title>
   <link rel="stylesheet" href="/static/style.css" />
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
   <section class="hero">
     <div class="container">
-      <div class="badge">Production Ready System</div>
-      <h1>Shopify PO Automation</h1>
-      <p class="subtitle">Seamlessly bridge your Shopify store with your n8n workflows. Professional, secure, and built for scale.</p>
-
-      <!-- Token box — only shown if localStorage has a valid token -->
-      <div id="tokenSection" class="token-container">
-        <div class="token-header">
-          <span class="token-label">Access Token · Visible for 1 hour</span>
-          <button class="copy-btn" id="copyBtnHome" onclick="copyHomeToken()">📋 Copy</button>
+      <div class="glass-card">
+        <div class="badge">
+          <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i>
+          Enterprise Ready System
         </div>
-        <div id="tokenValue" class="token-value"></div>
-        <div id="tokenMeta" class="token-meta"></div>
-      </div>
+        
+        <h1 class="gradient-text">Shopify PO Automation</h1>
+        <p class="subtitle">Seamlessly bridge your Shopify store with your n8n workflows. Professional, secure, and built for scale.</p>
 
-      <!-- Status -->
-      <div class="status-badge">
-        <span class="status-dot"></span>
-        <span class="status-text">App is connected to n8n</span>
-      </div>
+        <!-- Status -->
+        <div class="status-pill">
+          <div class="dot"></div>
+          <span class="status-text">System Online & Active</span>
+        </div>
 
-      <br />
-      <a href="/install" class="btn btn-primary">Connect &amp; Authenticate Store</a>
+        <div style="margin-bottom: 2rem;">
+          <a href="/install" class="btn btn-primary">
+            <i data-lucide="link"></i>
+            Connect & Authenticate Store
+          </a>
+        </div>
+
+        <!-- Token box — only shown if localStorage has a valid token -->
+        <div id="tokenSection" class="token-section">
+          <div class="token-label">
+            <span>Recent Access Token</span>
+            <button class="copy-btn" id="copyBtnHome" onclick="copyHomeToken()" style="background: none; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px;">
+              Copy
+            </button>
+          </div>
+          <div id="tokenValue" class="token-value"></div>
+          <div id="tokenMeta" style="font-size: 11px; color: var(--text-secondary); margin-top: 8px;"></div>
+        </div>
+      </div>
     </div>
   </section>
 
   <script src="/static/home.js"></script>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
 </body>
 </html>

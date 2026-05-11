@@ -3,32 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Connected to Shopify ✅</title>
+  <title>Authentication Successful ✅</title>
   <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body data-token="{{ token }}">
-  <div class="success-card">
-    <div class="success-badge">✅ Authentication Successful</div>
-    <h1>Your store is connected!</h1>
-    <p>Copy the access token below and paste it into your n8n <strong>Header Auth</strong> credential.</p>
+  <section class="success-page">
+    <div class="container" style="max-width: 600px;">
+      <div class="glass-card" style="text-align: center;">
+        <div class="icon-circle">
+          <i data-lucide="check-circle-2" style="width: 40px; height: 40px;"></i>
+        </div>
+        
+        <h1 class="gradient-text" style="font-size: 2rem;">Authentication Successful!</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Your store is now connected. Use the token below in your n8n workflows.</p>
 
-    <div id="accessToken" class="token-box-success">{{ token }}</div>
-    <button class="copy-btn-large" id="copyBtn" onclick="copyToken()">Copy Token</button>
+        <div class="token-value" id="accessToken" style="font-size: 1rem; padding: 1.25rem;">
+          {{ token }}
+        </div>
+        
+        <button class="btn btn-primary copy-btn-large" id="copyBtn" onclick="copyToken()">
+          <i data-lucide="copy"></i>
+          Copy Access Token
+        </button>
 
-    <hr class="divider" />
+        <div style="border-top: 1px solid var(--glass-border); margin: 2.5rem 0;"></div>
 
-    <p style="margin-bottom: 14px;"><strong>How to set up in n8n:</strong></p>
-    <ol class="steps">
-      <li>Open n8n and go to <strong>Credentials</strong>.</li>
-      <li>Create a new <strong>Header Auth</strong> credential.</li>
-      <li>Set <strong>Name</strong> to <code>X-Shopify-Access-Token</code>.</li>
-      <li>Paste the token into the <strong>Value</strong> field.</li>
-      <li>Save and use it in your Shopify workflows!</li>
-    </ol>
+        <h3 style="font-size: 1.1rem; text-align: left; margin-bottom: 1.5rem;">Next Steps for n8n:</h3>
+        <ul class="steps">
+          <li>Create a new <b>Header Auth</b> credential.</li>
+          <li>Set the header name to <code>X-Shopify-Access-Token</code>.</li>
+          <li>Paste the token value from above.</li>
+          <li>Save and start automating!</li>
+        </ul>
 
-    <div class="footer-note">This token is permanent and will not expire.</div>
-  </div>
+        <p style="font-size: 0.8rem; color: #4b5563;">This token is persistent and does not expire.</p>
+      </div>
+    </div>
+  </section>
 
   <script src="/static/success.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>
