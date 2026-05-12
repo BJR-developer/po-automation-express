@@ -45,7 +45,7 @@ const CLIENT_ID     = process.env.SHOPIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SHOPIFY_CLIENT_SECRET;
 const STORE         = process.env.SHOPIFY_STORE;
 const REDIRECT_URI  = process.env.SHOPIFY_REDIRECT_URI;
-const API_VERSION   = process.env.SHOPIFY_API_VERSION || '2026-07';
+const API_VERSION   = process.env.SHOPIFY_API_VERSION || '2024-04';
 const SCOPES        = 'write_draft_orders,read_draft_orders,write_products,read_products';
 const PORT          = parseInt(process.env.PORT || '3000', 10);
 
