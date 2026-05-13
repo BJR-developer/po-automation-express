@@ -179,6 +179,27 @@ app.post('/draft-orders', async (req, res) => {
     },
   };
 
+  const customerId = body.customer_id || body.customerId;
+  if (customerId) {
+    variables.input.customerId = customerId;
+  }
+  
+  if (body.shipping_address) {
+    // Shopify GraphQL expects camelCase for shipping address fields
+    const sa = body.shipping_address;
+    variables.input.shippingAddress = {
+      address1:  sa.address1 || sa.address || '',
+      address2:  sa.address2 || '',
+      city:      sa.city || '',
+      zip:       sa.zip || '',
+      province:  sa.province || '',
+      country:   sa.country || 'United States',
+      firstName: sa.firstName || sa.first_name || '',
+      lastName:  sa.lastName || sa.last_name || '',
+    };
+  }
+
+
   try {
     const data = await shopifyGraphQL(accessToken, query, variables);
 
@@ -337,11 +358,13 @@ app.get('/customers/search', async (req, res) => {
             firstName
             lastName
             email
-            defaultAddress {
+            addresses(first: 10) {
+              id
               address1
               city
               province
               zip
+              company
             }
           }
         }
@@ -357,7 +380,14 @@ app.get('/customers/search', async (req, res) => {
       first_name: node.firstName,
       last_name: node.lastName,
       email: node.email,
-      address: node.defaultAddress
+      addresses: (node.addresses ?? []).map((a) => ({
+        id: a.id,
+        address1: a.address1,
+        city: a.city,
+        province: a.province,
+        zip: a.zip,
+        company: a.company
+      }))
     }));
     return res.json(customers);
   } catch (err) {
