@@ -40,6 +40,27 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
+## Shopify App Configuration
+
+To use this automation, you must configure a **Custom App** in your [Shopify Partner Dashboard](https://partners.shopify.com/):
+
+### 1. URLs
+In the **App Setup** section, set the following:
+- **App URL**: `http://localhost:3000` (or your production URL)
+- **Allowed Redirection URL**: `http://localhost:3000/callback`
+
+### 2. API Scopes
+Navigate to **API access** and add the following scopes under "Admin API access":
+- `write_draft_orders`
+- `read_draft_orders`
+- `write_products`
+- `read_products`
+- `read_customers`
+- `write_customers`
+
+> [!IMPORTANT]
+> After updating the scopes, ensure you **Create a new app version** in the dashboard and **Release** it for the changes to take effect.
+
 ## Environment Variables
 
 Copy `.env.example` → `.env` and fill in your values:
@@ -49,8 +70,8 @@ Copy `.env.example` → `.env` and fill in your values:
 | `SHOPIFY_CLIENT_ID` | From Partner Dashboard |
 | `SHOPIFY_CLIENT_SECRET` | From Partner Dashboard |
 | `SHOPIFY_STORE` | `your-store.myshopify.com` |
-| `SHOPIFY_REDIRECT_URI` | OAuth callback URL |
-| `SHOPIFY_API_VERSION` | Default: `2026-07` |
+| `SHOPIFY_REDIRECT_URI` | `http://localhost:3000/callback` |
+| `SHOPIFY_API_VERSION` | Default: `2024-04` |
 | `PORT` | Default: `3000` |
 
 ## API Usage
