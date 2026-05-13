@@ -46,7 +46,7 @@ const CLIENT_SECRET = process.env.SHOPIFY_CLIENT_SECRET;
 const STORE         = process.env.SHOPIFY_STORE;
 const REDIRECT_URI  = process.env.SHOPIFY_REDIRECT_URI;
 const API_VERSION   = process.env.SHOPIFY_API_VERSION || '2024-04';
-const SCOPES        = 'write_draft_orders,read_draft_orders,write_products,read_products';
+const SCOPES        = 'write_draft_orders,read_draft_orders,write_products,read_products,read_customers,write_customers';
 const PORT          = parseInt(process.env.PORT || '3000', 10);
 
 if (!CLIENT_ID || !CLIENT_SECRET || !STORE) {
@@ -270,6 +270,101 @@ app.get('/draft-orders/*', async (req, res) => {
     return res.status(502).json({ error: err.message });
   }
 });
+
+// GET /products/search?q=...
+app.get('/products/search', async (req, res) => {
+  const accessToken = req.headers['x-shopify-access-token'];
+  const searchTerm  = req.query.q;
+
+  if (!accessToken) return res.status(401).json({ error: 'Missing token' });
+  if (!searchTerm) return res.status(400).json({ error: 'Missing query parameter q' });
+
+  const query = `
+    query searchProducts($query: String!) {
+      products(first: 5, query: $query) {
+        edges {
+          node {
+            id
+            title
+            variants(first: 10) {
+              edges {
+                node {
+                  id
+                  title
+                  price
+                  sku
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await shopifyGraphQL(accessToken, query, { query: `title:*${searchTerm}*` });
+    const products = (data?.data?.products?.edges ?? []).map(({ node }) => ({
+      id: node.id,
+      title: node.title,
+      variants: node.variants.edges.map(({ node: v }) => ({
+        id: v.id,
+        title: v.title,
+        price: v.price,
+        sku: v.sku
+      }))
+    }));
+    return res.json(products);
+  } catch (err) {
+    return res.status(502).json({ error: err.message });
+  }
+});
+
+// GET /customers/search?q=...
+app.get('/customers/search', async (req, res) => {
+  const accessToken = req.headers['x-shopify-access-token'];
+  const searchTerm  = req.query.q;
+
+  if (!accessToken) return res.status(401).json({ error: 'Missing token' });
+  if (!searchTerm) return res.status(400).json({ error: 'Missing query parameter q' });
+
+  const query = `
+    query searchCustomers($query: String!) {
+      customers(first: 5, query: $query) {
+        edges {
+          node {
+            id
+            firstName
+            lastName
+            email
+            defaultAddress {
+              address1
+              city
+              province
+              zip
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    // Shopify query syntax: search by email first, then name
+    const data = await shopifyGraphQL(accessToken, query, { query: searchTerm });
+    const customers = (data?.data?.customers?.edges ?? []).map(({ node }) => ({
+      id: node.id,
+      first_name: node.firstName,
+      last_name: node.lastName,
+      email: node.email,
+      address: node.defaultAddress
+    }));
+    return res.json(customers);
+  } catch (err) {
+    return res.status(502).json({ error: err.message });
+  }
+});
+
 
 // ── Entry Point ───────────────────────────────────────────────────────────────
 
