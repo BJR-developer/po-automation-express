@@ -157,19 +157,7 @@ app.post('/draft-orders', async (req, res) => {
     return gqlItem;
   });
 
-  const query = `
-    mutation draftOrderCreate($input: DraftOrderInput!) {
-      draftOrderCreate(input: $input) {
-        draftOrder {
-          id name status invoiceUrl
-          lineItems(first: 20) {
-            edges { node { title quantity originalUnitPrice } }
-          }
-        }
-        userErrors { field message }
-      }
-    }
-  `;
+  // Variables for the GraphQL mutation
 
   const variables = {
     input: {
@@ -199,6 +187,19 @@ app.post('/draft-orders', async (req, res) => {
     };
   }
 
+  const query = `
+    mutation draftOrderCreate($input: DraftOrderInput!) {
+      draftOrderCreate(input: $input) {
+        draftOrder {
+          id name status invoiceUrl totalPrice
+          lineItems(first: 20) {
+            edges { node { title quantity originalUnitPrice } }
+          }
+        }
+        userErrors { field message }
+      }
+    }
+  `;
 
   try {
     const data = await shopifyGraphQL(accessToken, query, variables);
@@ -226,6 +227,7 @@ app.post('/draft-orders', async (req, res) => {
       name:        draft.name,
       status:      draft.status,
       invoice_url: draft.invoiceUrl,
+      total_price: draft.totalPrice,
       line_items:  (draft.lineItems?.edges ?? []).map(({ node }) => ({
         title:    node.title,
         quantity: node.quantity,
