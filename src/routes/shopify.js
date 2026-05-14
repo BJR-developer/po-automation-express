@@ -155,6 +155,50 @@ router.get('/draft-orders/*', async (req, res) => {
   }
 });
 
+router.post('/draft-orders/:id/send-invoice', async (req, res) => {
+  const accessToken = req.headers['x-shopify-access-token'];
+  if (!accessToken) return res.status(401).json({ error: 'Missing token' });
+
+  let draftId = req.params.id;
+  // Make sure we have the correct GID format
+  if (!draftId.startsWith('gid://')) draftId = `gid://shopify/DraftOrder/${draftId}`;
+
+  // Optional email customization
+  const emailInput = req.body.email || undefined; 
+
+  const query = `
+    mutation draftOrderInvoiceSend($id: ID!, $email: EmailInput) {
+      draftOrderInvoiceSend(id: $id, email: $email) {
+        draftOrder {
+          id
+          invoiceUrl
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  try {
+    const variables = { id: draftId };
+    if (emailInput) variables.email = emailInput;
+
+    const data = await shopifyGraphQL(accessToken, query, variables);
+    if (data.errors) return res.status(403).json({ error: 'GraphQL error', details: data.errors });
+    
+    const result = data?.data?.draftOrderInvoiceSend;
+    if (result?.userErrors?.length) {
+      return res.status(422).json({ error: 'Validation failed', details: result.userErrors });
+    }
+    
+    return res.status(200).json({ success: true, draftOrder: result?.draftOrder });
+  } catch (err) {
+    return res.status(502).json({ error: err.message });
+  }
+});
+
 // ── Search ────────────────────────────────────────────────────────────────────
 
 router.get('/products/search', async (req, res) => {
@@ -193,4 +237,4 @@ router.get('/customers/search', async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = Object.assign(router, { shopifyGraphQL });

@@ -11,8 +11,9 @@ const path     = require('path');
 const nunjucks = require('nunjucks');
 
 // Routers
-const authRouter = require('./routes/auth');
+const { router: authRouter } = require('./routes/auth');
 const shopifyRouter = require('./routes/shopify');
+const slackRouter = require('./routes/slack');
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.get('/health', (_req, res) => {
 
 // Mount Routers
 app.use('/auth', authRouter);
+app.use('/slack', slackRouter);
 app.use('/', shopifyRouter);
 
 // ── Entry Point ───────────────────────────────────────────────────────────────

@@ -6,43 +6,43 @@ const CLIENT_ID = process.env.SHOPIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SHOPIFY_CLIENT_SECRET;
 
 /**
+ * Helper to fetch a fresh token.
+ */
+async function getShopifyToken() {
+  if (!SHOP || !CLIENT_ID || !CLIENT_SECRET) {
+    throw new Error('Missing Shopify configuration on server (SHOP, CLIENT_ID, or CLIENT_SECRET).');
+  }
+
+  const shopDomain = SHOP.includes('.myshopify.com') ? SHOP : `${SHOP}.myshopify.com`;
+  
+  const response = await fetch(
+    `https://${shopDomain}/admin/oauth/access_token`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Token request failed: ${response.status} - ${errorText}`);
+  }
+
+  return response.json();
+}
+
+/**
  * GET /auth/shopify/token
  * Returns a fresh Shopify access token using client_credentials flow.
  */
 router.get('/shopify/token', async (req, res) => {
-  if (!SHOP || !CLIENT_ID || !CLIENT_SECRET) {
-    return res.status(500).json({
-      error: 'Missing Shopify configuration on server (SHOP, CLIENT_ID, or CLIENT_SECRET).'
-    });
-  }
-
   try {
-    const shopDomain = SHOP.includes('.myshopify.com') ? SHOP : `${SHOP}.myshopify.com`;
-    
-    const response = await fetch(
-      `https://${shopDomain}/admin/oauth/access_token`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          grant_type: 'client_credentials',
-          client_id: CLIENT_ID,
-          client_secret: CLIENT_SECRET,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Shopify token request failed:', errorText);
-      return res.status(response.status).json({ 
-        error: `Token request failed: ${response.status}`,
-        details: errorText
-      });
-    }
-
-    const data = await response.json();
-    // data usually contains { access_token, scope, expires_in }
+    const data = await getShopifyToken();
     return res.json({
       access_token: data.access_token,
       expires_in: data.expires_in,
@@ -54,4 +54,4 @@ router.get('/shopify/token', async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = { router, getShopifyToken };
