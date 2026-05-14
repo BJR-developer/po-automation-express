@@ -47,6 +47,10 @@ app.get('/', (_req, res) => {
   });
 });
 
+app.get('/health', (_req, res) => {
+  res.json({ status: "ok", server: "express" });
+});
+
 // Mount Routers
 app.use('/auth', authRouter);
 app.use('/', shopifyRouter);
